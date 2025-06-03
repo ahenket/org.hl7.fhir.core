@@ -26,14 +26,13 @@ import org.hl7.fhir.r5.model.Enumeration;
 import org.hl7.fhir.r5.model.PrimitiveType;
 import org.hl7.fhir.r5.model.Resource;
 import org.hl7.fhir.r5.model.StringType;
-
 import org.hl7.fhir.r5.renderers.utils.Resolver.IReferenceResolver;
 import org.hl7.fhir.r5.terminologies.utilities.ValidationResult;
 import org.hl7.fhir.r5.utils.ToolingExtensions;
 import org.hl7.fhir.utilities.FhirPublication;
 import org.hl7.fhir.utilities.MarkDownProcessor;
-import org.hl7.fhir.utilities.MarkedToMoveToAdjunctPackage;
 import org.hl7.fhir.utilities.MarkDownProcessor.Dialect;
+import org.hl7.fhir.utilities.MarkedToMoveToAdjunctPackage;
 import org.hl7.fhir.utilities.StandardsStatus;
 import org.hl7.fhir.utilities.StringPair;
 import org.hl7.fhir.utilities.Utilities;
@@ -105,6 +104,13 @@ public class RenderingContext extends RenderingI18nContext {
         return defLangRC;
       } else {
         return langs.get(lang);
+      }
+    }
+
+    public void setNoHeader(boolean b) {
+      defLangRC.setNoHeader(b);
+      for (RenderingContext rc : langs.values()) {
+        rc.setNoHeader(b);
       }
     }
   }
@@ -253,6 +259,9 @@ public class RenderingContext extends RenderingI18nContext {
     ALL // in addition to translations in designations, look for an render translations (WIP)
   }
 
+
+
+
   private final IWorkerContext worker;
   private MarkDownProcessor markdown;
   private ResourceRendererMode mode;
@@ -317,6 +326,7 @@ public class RenderingContext extends RenderingI18nContext {
   private IResourceLinkResolver resolveLinkResolver;
   private boolean debug;
   private DesignationMode designationMode;
+  private boolean noHeader;
   
   /**
    * 
@@ -389,6 +399,7 @@ public class RenderingContext extends RenderingI18nContext {
     res.unknownLocalReferencesNotLinks = unknownLocalReferencesNotLinks;
     res.resolveLinkResolver = resolveLinkResolver;
     res.debug = debug;
+    res.noHeader = noHeader;
     return res;
   }
   
@@ -1128,4 +1139,14 @@ public class RenderingContext extends RenderingI18nContext {
     self.oids = oids;
     return self;
   }
+
+  public boolean isNoHeader() {
+    return noHeader;
+  }
+
+  public void setNoHeader(boolean noHeader) {
+    this.noHeader = noHeader;
+  }
+
+
 }

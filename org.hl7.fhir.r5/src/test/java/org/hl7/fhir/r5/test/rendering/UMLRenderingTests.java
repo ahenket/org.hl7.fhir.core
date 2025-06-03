@@ -46,8 +46,8 @@ public class UMLRenderingTests {
     ToolsRegistration.register();
     TestCases tests = (TestCases) new JsonParser().parse(TestingUtilities.loadTestResource("r5", "uml", "manifest.json"));
     List<Arguments> objects = new ArrayList<>();
-    for (TestCasesSuiteComponent suite : tests.getSuite()) {
-      for (TestCasesSuiteTestComponent test : suite.getTest()) {
+    for (TestCasesSuiteComponent suite : tests.getSuiteList()) {
+      for (TestCasesSuiteTestComponent test : suite.getTestList()) {
         objects.add(Arguments.of(suite.getName()+"/"+test.getName(), test));
       }
     }
@@ -119,7 +119,7 @@ public class UMLRenderingTests {
 
   private String makeClassSvg(TestCasesSuiteTestComponent test) throws FHIRException, IOException {
     StructureDefinition sd = null;
-    for (TestCasesSuiteResourceComponent input : test.getInput()) {
+    for (TestCasesSuiteResourceComponent input : test.getInputList()) {
       if ("source".equals(input.getName())) {
         sd = (StructureDefinition) new JsonParser().parse(TestingUtilities.loadTestResource("r5", "uml", input.getFile()));
       } else if ("template".equals(input.getName())) {
@@ -130,13 +130,13 @@ public class UMLRenderingTests {
       }
     }
     sd.setWebPath("http://test/path/"+sd.getId());
-    ClassDiagramRenderer cdr = new ClassDiagramRenderer(source, dest, sd.getId(), null, rc);
+    ClassDiagramRenderer cdr = new ClassDiagramRenderer(source, dest, sd.getId(), null, rc, null);
     return cdr.buildClassDiagram(sd);
   }
 
   private String makeProfileSvg(TestCasesSuiteTestComponent test) throws FHIRFormatError, IOException {
     StructureDefinition sd = null;
-    for (TestCasesSuiteResourceComponent input : test.getInput()) {
+    for (TestCasesSuiteResourceComponent input : test.getInputList()) {
       if ("source".equals(input.getName())) {
         sd = (StructureDefinition) new JsonParser().parse(TestingUtilities.loadTestResource("r5", "uml", input.getFile()));
       } else if ("template".equals(input.getName())) {
@@ -151,13 +151,13 @@ public class UMLRenderingTests {
 
     rc.getProfileUtilities().generateSnapshot(sdBase, sd, sd.getUrl(), "http://hl7.org/fhir/test", sd.getName());
     
-    ClassDiagramRenderer cdr = new ClassDiagramRenderer(source, dest, sd.getId(), null, rc);
+    ClassDiagramRenderer cdr = new ClassDiagramRenderer(source, dest, sd.getId(), null, rc, null);
     return cdr.buildConstraintDiagram(sd);
   }
 
   private String makeSummarySvg(TestCasesSuiteTestComponent test) throws Exception {
     JsonObject ctl = null;
-    for (TestCasesSuiteResourceComponent input : test.getInput()) {
+    for (TestCasesSuiteResourceComponent input : test.getInputList()) {
       if ("source".equals(input.getName())) {
         StructureDefinition sd = (StructureDefinition) new JsonParser().parse(TestingUtilities.loadTestResource("r5", "uml", input.getFile()));
         sd.setWebPath("http://test/path/"+sd.getId());
@@ -171,7 +171,7 @@ public class UMLRenderingTests {
         throw new FHIRException("Unknown input name '"+input.getName()+"'");
       }
     }
-    ClassDiagramRenderer cdr = new ClassDiagramRenderer(source, dest, ctl.asString("id"), null, rc);
+    ClassDiagramRenderer cdr = new ClassDiagramRenderer(source, dest, ctl.asString("id"), null, rc, null);
     return cdr.buildClassDiagram(ctl);
   }
  
